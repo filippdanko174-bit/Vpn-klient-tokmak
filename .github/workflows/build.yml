@@ -1,0 +1,37 @@
+name: Build APK
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Download Xray engine (libv2ray.aar)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download -R 2dust/AndroidLibXrayLite -p '*.aar' -D app/libs
+          ls -la app/libs
+      - name: Inspect engine API
+        run: |
+          mkdir -p /tmp/aar && cd /tmp/aar && unzip -q -o $GITHUB_WORKSPACE/app/libs/*.aar
+          find . -type f | head -50
+          mkdir cls && cd cls && unzip -q -o ../classes.jar
+          find . -name '*.class' | head -80
+          for c in $(find . -name '*.class' | sed 's|^\./||;s|\.class$||;s|/|.|g' | grep -v '\$'); do javap -public -cp . "$c"; done
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.10.2
+      - name: Build debug APK
+        run: gradle assembleDebug --no-daemon --stacktrace
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tokmak-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
