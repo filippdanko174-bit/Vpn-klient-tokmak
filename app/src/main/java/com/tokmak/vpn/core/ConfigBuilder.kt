@@ -104,10 +104,7 @@ object ConfigBuilder {
     private fun fillNames(stream: JSONObject, host: String) {
         stream.optJSONObject("tlsSettings")?.let { if (it.optString("serverName").isEmpty()) it.put("serverName", host) }
         stream.optJSONObject("realitySettings")?.let { if (it.optString("serverName").isEmpty()) it.put("serverName", host) }
-        stream.optJSONObject("wsSettings")?.let { ws ->
-            val h = ws.optJSONObject("headers") ?: JSONObject().also { ws.put("headers", it) }
-            if (h.optString("Host").isEmpty()) h.put("Host", host)
-        }
+        stream.optJSONObject("wsSettings")?.let { if (it.optString("host").isEmpty()) it.put("host", host) }
         stream.optJSONObject("httpupgradeSettings")?.let { if (it.optString("host").isEmpty()) it.put("host", host) }
         stream.optJSONObject("xhttpSettings")?.let { if (it.optString("host").isEmpty()) it.put("host", host) }
     }

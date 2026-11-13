@@ -154,9 +154,7 @@ object LinkParser {
         val path = q["path"].orEmpty()
         when (net) {
             "ws" -> {
-                val ws = JSONObject().put("path", path.ifEmpty { "/" })
-                if (host.isNotEmpty()) ws.put("headers", JSONObject().put("Host", host))
-                s.put("wsSettings", ws)
+                s.put("wsSettings", JSONObject().put("path", path.ifEmpty { "/" }).put("host", host))
             }
             "grpc" -> s.put(
                 "grpcSettings",
