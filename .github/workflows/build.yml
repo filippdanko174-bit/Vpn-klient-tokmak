@@ -38,17 +38,26 @@ jobs:
             ./xray run -test -c "$f" || fail=1
           done
           exit $fail
-      - name: Build debug APK
-        run: gradle assembleDebug --no-daemon --stacktrace
-      - uses: actions/upload-artifact@v4
-        with:
-          name: tokmak-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+      - name: Restore signing key
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > $RUNNER_TEMP/tokmak.jks
+            echo "KEYSTORE_PATH=$RUNNER_TEMP/tokmak.jks" >> $GITHUB_ENV
+            echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
+            echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
+            echo "Подпись: постоянный ключ"
+          else
+            echo "::warning::Секреты ключа не заданы, сборка подписана временным debug-ключом (обновление поверх старой версии не получится)"
+          fi
+      - name: Build release APK
+        run: gradle assembleRelease -PversionCode=${{ github.run_number }} --no-daemon --stacktrace
       - name: Publish APK to GitHub Releases
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp app/build/outputs/apk/debug/app-debug.apk Tokmak.apk
+          cp app/build/outputs/apk/release/app-release.apk Tokmak.apk
           gh release delete latest -y --cleanup-tag || true
           gh release create latest Tokmak.apk --target "$GITHUB_SHA" --prerelease \
             --title "Tokmak — последняя сборка" \

@@ -12,17 +12,33 @@ android {
         applicationId = "com.tokmak.vpn"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        val code = (project.findProperty("versionCode") as String?)?.toIntOrNull() ?: 1
+        versionCode = code
+        versionName = "0.1.$code"
 
         ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
         }
     }
 
+    // Постоянный ключ подписи берётся из переменных окружения (секреты CI),
+    // иначе сборка подписывается debug-ключом.
+    val ksPath = System.getenv("KEYSTORE_PATH")
+    signingConfigs {
+        if (ksPath != null && File(ksPath).exists()) {
+            create("release") {
+                storeFile = File(ksPath)
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEYSTORE_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
         }
     }
 
