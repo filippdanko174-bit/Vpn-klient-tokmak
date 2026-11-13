@@ -92,11 +92,12 @@ class Store(context: Context) {
         return k
     }
 
-    /** Стабильный случайный ключ для XUDP. */
+    /** Стабильный ключ XUDP: 32 случайных байта в base64url без паддинга (формат Xray). */
     fun xudpKey(): String {
-        sp.getString("xudp", null)?.let { return it }
-        val k = java.util.UUID.randomUUID().toString()
-        sp.edit().putString("xudp", k).apply()
+        sp.getString("xudp2", null)?.let { return it }
+        val bytes = ByteArray(32).also { java.security.SecureRandom().nextBytes(it) }
+        val k = java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(bytes)
+        sp.edit().putString("xudp2", k).apply()
         return k
     }
 }
