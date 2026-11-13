@@ -36,6 +36,12 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     // ---------- серверы ----------
 
     fun importText(text: String) {
+        val t = text.trim()
+        // Одна http(s)-ссылка в буфере — это подписка
+        if ((t.startsWith("http://") || t.startsWith("https://")) && t.none { it.isWhitespace() }) {
+            addSubscription("", t)
+            return
+        }
         val found = LinkParser.parseMany(text)
         if (found.isEmpty()) {
             message.value = "Ссылки не распознаны"
