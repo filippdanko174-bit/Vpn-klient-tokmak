@@ -16,19 +16,25 @@ jobs:
       - name: Download Xray engine (libv2ray.aar)
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release download -R 2dust/AndroidLibXrayLite -p '*.aar' -D app/libs
-          ls -la app/libs
-      - name: Inspect engine API
-        run: |
-          mkdir -p /tmp/aar && cd /tmp/aar && unzip -q -o $GITHUB_WORKSPACE/app/libs/*.aar
-          find . -type f | head -50
-          mkdir cls && cd cls && unzip -q -o ../classes.jar
-          find . -name '*.class' | head -80
-          for c in $(find . -name '*.class' | sed 's|^\./||;s|\.class$||;s|/|.|g' | grep -v '\$'); do javap -public -cp . "$c"; done
+        run: gh release download -R 2dust/AndroidLibXrayLite -p '*.aar' -D app/libs
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.10.2
+      - name: Unit tests (parsers + config generation)
+        run: gradle testDebugUnitTest --no-daemon --stacktrace
+      - name: Validate generated configs with real Xray
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/xray && cd /tmp/xray
+          gh release download -R XTLS/Xray-core -p 'Xray-linux-64.zip'
+          unzip -q -o Xray-linux-64.zip
+          fail=0
+          for f in $GITHUB_WORKSPACE/app/build/test-configs/*.json; do
+            echo "== $(basename $f)"
+            ./xray run -test -c "$f" || fail=1
+          done
+          exit $fail
       - name: Build debug APK
         run: gradle assembleDebug --no-daemon --stacktrace
       - uses: actions/upload-artifact@v4
