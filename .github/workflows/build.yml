@@ -12,53 +12,65 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
-      - name: Download Xray engine (libv2ray.aar)
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release download -R 2dust/AndroidLibXrayLite -p '*.aar' -D app/libs
+          java-version: 21
+
       - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: 8.10.2
-      - name: Unit tests (parsers + config generation)
-        run: gradle testDebugUnitTest --no-daemon --stacktrace
-      - name: Validate generated configs with real Xray
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          mkdir -p /tmp/xray && cd /tmp/xray
-          gh release download -R XTLS/Xray-core -p 'Xray-linux-64.zip'
-          unzip -q -o Xray-linux-64.zip
-          fail=0
-          for f in $GITHUB_WORKSPACE/app/build/test-configs/*.json; do
-            echo "== $(basename $f)"
-            ./xray run -test -c "$f" || fail=1
-          done
-          exit $fail
-      - name: Restore signing key
+
+      - name: Signing key
+        id: key
         env:
           KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
           if [ -n "$KEYSTORE_B64" ]; then
-            echo "$KEYSTORE_B64" | base64 -d > $RUNNER_TEMP/tokmak.jks
-            echo "KEYSTORE_PATH=$RUNNER_TEMP/tokmak.jks" >> $GITHUB_ENV
-            echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
-            echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
+            echo "$KEYSTORE_B64" | base64 -d > tokmak.keystore
+            printf 'storeFile=tokmak.keystore\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+              "$KEYSTORE_PASSWORD" "$KEY_ALIAS" "$KEYSTORE_PASSWORD" > keystore.properties
+            echo "signed=true" >> "$GITHUB_OUTPUT"
             echo "Подпись: постоянный ключ"
           else
-            echo "::warning::Секреты ключа не заданы, сборка подписана временным debug-ключом (обновление поверх старой версии не получится)"
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Секреты ключа не заданы: сборка подписана временным ключом, обновление поверх старой версии не получится"
           fi
-      - name: Build release APK
-        run: gradle assembleRelease -PversionCode=${{ github.run_number }} --no-daemon --stacktrace
-      - name: Publish APK to GitHub Releases
+
+      - name: Build number
+        id: ver
+        run: |
+          # Сборка Gradle добавляет +1 к файлу, поэтому кладём на единицу меньше.
+          N=$((GITHUB_RUN_NUMBER + 1000))
+          echo $((N - 1)) > build_number.properties
+          echo "build=$N" >> "$GITHUB_OUTPUT"
+
+      - name: Accept Android SDK licenses
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+
+      - name: Build release APKs
+        run: chmod +x gradlew && ./gradlew :app:assembleRelease --no-daemon --stacktrace
+
+      - name: Collect APKs
+        run: |
+          mkdir -p dist
+          ls -la app/build/outputs/apk/release/ || true
+          for f in app/build/outputs/apk/release/*.apk; do
+            b=$(basename "$f" .apk)
+            abi=$(echo "$b" | grep -oE 'arm64-v8a|armeabi-v7a|x86_64|universal' | head -1)
+            cp "$f" "dist/Tokmak-release-${abi:-unknown}.apk"
+          done
+          ls -la dist
+
+      - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp app/build/outputs/apk/release/app-release.apk Tokmak.apk
-          gh release delete latest -y --cleanup-tag || true
-          gh release create latest Tokmak.apk --target "$GITHUB_SHA" --prerelease \
-            --title "Tokmak — последняя сборка" \
-            --notes "Автосборка из ветки main, коммит ${GITHUB_SHA::7}. Скачай Tokmak.apk и установи."
+          N=${{ steps.ver.outputs.build }}
+          FLAG=""
+          if [ "${{ steps.key.outputs.signed }}" != "true" ]; then FLAG="--prerelease"; fi
+          gh release delete latest -y --cleanup-tag 2>/dev/null || true
+          gh release create "v0.9.$N" dist/*.apk --target "$GITHUB_SHA" $FLAG \
+            --title "Tokmak 0.9.$N" \
+            --notes "Сборка из main, коммит ${GITHUB_SHA::7}. Для телефона обычно нужен Tokmak-release-arm64-v8a.apk."

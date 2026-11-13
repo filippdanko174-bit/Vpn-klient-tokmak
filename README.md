@@ -1,22 +1,16 @@
 # Tokmak
 
-VPN-клиент для протокола Xray (VLESS и родственные). Android, Jetpack Compose, Material 3.
+VPN-клиент для Xray (VLESS, VMess, Trojan, Shadowsocks, Hysteria2) для Android.
 
-Статус: каркас. Подключение пока только имитируется кнопкой.
+Основан на открытом проекте [Chumpy](https://github.com/ChumpyXray/Chumpy)
+(© 2026 Miho, лицензия MIT — см. файл `LICENSE`). Оригинальный текст лицензии сохранён.
 
-## Сборка
+## Что изменено относительно Chumpy
+- Другое имя приложения и `applicationId` (`com.tokmak.client`), поэтому ставится рядом с Chumpy.
+- Проверка обновлений смотрит в релизы этого репозитория.
+- Сборка и публикация APK через GitHub Actions.
 
-Открой папку в Android Studio (Ladybug или новее), дождись синхронизации Gradle и запусти `app`.
-Минимальная версия Android: 8.0 (API 26).
-
-## План
-
-1. Каркас (готово)
-2. Парсеры `vless://`, `vmess://`, `trojan://`, `ss://` и подписок
-3. Хранение профилей (Room, DataStore)
-4. Движок Xray через AndroidLibXrayLite
-5. `VpnService` и foreground-уведомление
-6. Пинг серверов
-7. Маршрутизация
-8. Дизайн и анимации
-9. Релиз: подпись, APK, политика конфиденциальности
+## Установка и обновления
+APK лежат в [Releases](../../releases). Для установки обновления поверх старой версии
+нужен постоянный ключ подписи (секреты `KEYSTORE_B64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`).
+Без него CI публикует сборку как pre-release, и встроенное обновление её не предлагает.

@@ -1,3 +1,326 @@
 <resources>
-    <string name="app_name">Tokmak</string>
+    <string name="app_name" translatable="false">Tokmak</string>
+
+    <!-- The build's own stage, worn as a quiet chip. -->
+    <string name="badge_alpha">Alpha</string>
+
+    <!-- Greetings -->
+    <string name="greeting_morning">Good morning</string>
+    <string name="greeting_afternoon">Good afternoon</string>
+    <string name="greeting_evening">Good evening</string>
+    <string name="greeting_night">Good night</string>
+
+    <!-- Home -->
+    <string name="home_state_up">Connected</string>
+    <string name="home_state_down">Not connected</string>
+    <string name="home_state_connecting">Connecting…</string>
+    <string name="home_state_disconnecting">Disconnecting…</string>
+    <string name="home_ping_ms">%1$d ms</string>
+    <string name="home_value_pending">…</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_servers">Servers</string>
+    <string name="nav_stats">Stats</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_back">Back</string>
+
+    <!-- Servers -->
+    <string name="servers_total">Servers: %1$d</string>
+    <string name="servers_sort_default">by Config</string>
+    <string name="servers_sort_name">by Name</string>
+    <string name="servers_sort_ping">by Ping</string>
+    <string name="servers_sort_last_used">by Last use</string>
+    <plurals name="servers_balancer_members">
+        <item quantity="one">%1$d server</item>
+        <item quantity="other">%1$d servers</item>
+    </plurals>
+    <string name="servers_balancer_random">random</string>
+    <string name="servers_balancer_round_robin">round robin</string>
+    <string name="servers_balancer_least_ping">least ping</string>
+    <string name="servers_balancer_least_load">least load</string>
+    <string name="servers_ping_ms">%1$d ms</string>
+    <string name="servers_offline">can\'t ping</string>
+    <string name="servers_empty_title">No servers</string>
+    <string name="servers_empty_hint">Pull down to measure them, or update the subscription.</string>
+
+    <!-- Subscriptions -->
+    <string name="subscription_update_failed">Couldn\'t update the subscription: %1$s</string>
+    <string name="subscription_update">Update subscription</string>
+    <string name="subscription_expand">Switch subscription</string>
+    <string name="subscription_add">Add subscription or config</string>
+    <string name="standalone_name">Loose configs</string>
+    <string name="import_config">Import config</string>
+    <string name="import_read_failed">Couldn\'t read the file</string>
+    <string name="scan_qr_code">Scan QR code</string>
+    <string name="scan_hint">Point the camera at a QR code</string>
+    <string name="scan_close">Close the scanner</string>
+    <string name="subscription_cancel">Cancel</string>
+    <string name="subscription_url_field">Add by URL</string>
+    <string name="subscription_none">No subscription</string>
+    <string name="subscription_choose">Choose subscription</string>
+    <string name="subscription_collapse">Collapse</string>
+    <string name="subscription_bw_percent" translatable="false">%1$d%%</string>
+    <plurals name="subscription_days_remaining">
+        <item quantity="one">%1$d/30 day remaining</item>
+        <item quantity="other">%1$d/30 days remaining</item>
+    </plurals>
+    <string name="subscription_days_infinite">∞ days remaining</string>
+    <string name="subscription_hours_left">%1$d h left</string>
+    <string name="subscription_expired">expired</string>
+    <string name="subscription_expired_chip">Expired</string>
+    <string name="subscription_consumed" translatable="false">%1$s / %2$s</string>
+    <string name="subscription_unlimited">unlimited</string>
+    <string name="subscription_updated_at">Updated at %1$s</string>
+    <string name="subscription_updated_ago">Updated %1$s ago</string>
+    <string name="config_delete_title">Delete this config?</string>
+    <string name="subscription_delete_title">Delete this subscription?</string>
+    <string name="card_menu_pin">Pin</string>
+    <string name="card_menu_unpin">Unpin</string>
+    <string name="card_menu_pinned">Pinned</string>
+    <string name="card_menu_hide">Hide</string>
+    <string name="card_menu_unhide">Show</string>
+    <string name="card_menu_concealed">Hidden</string>
+    <string name="card_menu_copy_url">Copy URL</string>
+    <string name="card_menu_delete">Delete</string>
+    <string name="card_menu_yes">Yes</string>
+    <string name="card_menu_no">No</string>
+
+    <string name="happ_title">Spoof as Happ</string>
+    <string name="happ_active">Enabled</string>
+    <string name="happ_edit">Edit spoof strings</string>
+    <string name="happ_app_version">App version</string>
+    <string name="happ_os">OS</string>
+    <string name="happ_os_version">OS version</string>
+    <string name="happ_device_model">Device model</string>
+    <string name="happ_locale">Language</string>
+    <string name="happ_user_id">User ID</string>
+    <string name="happ_hwid">HWID</string>
+    <string name="happ_regenerate">Regenerate identity</string>
+    <string name="happ_regenerate_title">Regenerate the identity?</string>
+    <string name="happ_regenerate_text">A new user ID and hardware ID take the old one\'s place — the panels will see a fresh device they have never met, and the current identity is gone for good.</string>
+    <string name="happ_regenerate_confirm">Regenerate</string>
+
+    <!-- Welcome (first run) -->
+    <string name="welcome_title">Hello, stranger!</string>
+    <string name="welcome_subtitle">Welcome to Tokmak! Add a subscription or config to get started.</string>
+    <string name="import_nothing_new">Nothing new to import</string>
+
+    <!-- Settings -->
+    <string name="settings_interface">Interface</string>
+    <string name="settings_connection">Connection</string>
+    <string name="settings_about">About</string>
+    <string name="settings_colors">Colors</string>
+    <string name="settings_theme_system">Auto</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_accent_adaptive">Adaptive</string>
+    <string name="settings_accent_wallpaper_1">Wallpaper color 1</string>
+    <string name="settings_accent_wallpaper_2">Wallpaper color 2</string>
+    <string name="settings_accent_wallpaper_3">Wallpaper color 3</string>
+    <string name="settings_accent_red">Red</string>
+    <string name="settings_accent_orange">Orange</string>
+    <string name="settings_accent_yellow">Yellow</string>
+    <string name="settings_accent_green">Green</string>
+    <string name="settings_accent_sky">Sky</string>
+    <string name="settings_accent_blue">Blue</string>
+    <string name="settings_accent_indigo">Indigo</string>
+    <string name="settings_accent_violet">Violet</string>
+    <string name="settings_accent_mono">Monochrome</string>
+    <string name="settings_accent_rainbow">Rainbow</string>
+    <string name="settings_accent_custom">Custom</string>
+    <string name="settings_accent_custom_title">Custom color</string>
+    <string name="settings_accent_custom_hex">Hex color</string>
+    <string name="settings_accent_custom_pick">Pick</string>
+    <string name="settings_slow_animations">Slow animations</string>
+    <string name="settings_slow_animations_hint">Springs get softer, everything moves slower</string>
+    <string name="settings_simple_transitions">Simple transitions</string>
+    <string name="settings_simple_transitions_hint">Better for weaker devices</string>
+    <string name="settings_haptic_feedback">Haptic feedback</string>
+    <string name="settings_haptic_feedback_hint">A light poke when the buttons are tapped</string>
+    <string name="settings_mask_addresses">Mask addresses</string>
+    <string name="settings_mask_addresses_hint">IPs and domains never show in the lists</string>
+    <string name="settings_fonts">Fonts</string>
+    <string name="settings_flag_style">Flag style</string>
+    <string name="settings_flag_twemoji" translatable="false">Twemoji</string>
+    <string name="settings_flag_system">System emoji</string>
+    <string name="settings_flag_globe">Just globe</string>
+    <string name="settings_app_icon">App icon</string>
+    <string name="settings_icon_chumpy" translatable="false">Chumpy</string>
+    <string name="settings_icon_inverted">Inverted</string>
+    <string name="settings_icon_dark">Dark</string>
+    <string name="settings_icon_themed">Themed</string>
+    <string name="settings_wallpapers">Wallpapers</string>
+    <string name="settings_wallpapers_hint">The backdrop behind the app</string>
+    <string name="settings_navbar_blur">Navigation bar blur</string>
+    <string name="settings_navbar_blur_hint">The bar frosts whatever is behind it</string>
+    <string name="settings_navbar_blur_intensity">How dense and blurry the bar gets</string>
+    <string name="settings_classic_navbar">Classic navigation bar</string>
+    <string name="settings_classic_navbar_hint">A full-width bar along the bottom instead of floating pills</string>
+    <string name="settings_small_screen_forced_on">Small screen layout forced on. Long-tap to switch</string>
+    <string name="settings_small_screen_forced_off">Small screen layout forced off. Long-tap to switch</string>
+
+    <!-- Connection settings -->
+    <string name="settings_routing_global">Global</string>
+    <string name="settings_routing_global_hint">Route everything</string>
+    <string name="settings_routing_dont_route">Don\'t route %s</string>
+    <string name="region_ru">Russia</string>
+    <string name="region_cn">China</string>
+    <string name="region_ir">Iran</string>
+    <string name="region_af">Afghanistan</string>
+    <string name="region_id">Indonesia</string>
+    <string name="region_tr">Turkey</string>
+    <string name="region_br">Brazil</string>
+    <string name="settings_test_url">Delay test URL</string>
+    <string name="settings_test_url_hint">Fetched through every server to measure the real ping</string>
+    <string name="per_app_title">Per-app proxy</string>
+    <string name="per_app_hint">Don\'t route selected apps</string>
+    <plurals name="per_app_count">
+        <item quantity="one">Don\'t route %1$d app</item>
+        <item quantity="other">Don\'t route %1$d apps</item>
+    </plurals>
+    <string name="per_app_disabled">Disabled</string>
+    <string name="connection_auto_reconnect">Auto-reconnect</string>
+    <string name="connection_auto_reconnect_on">The tunnel comes back on its own wherever it fell</string>
+    <string name="connection_auto_reconnect_off">A fall waits for the alert\'s Reconnect</string>
+    <string name="connection_bypass_lan">Bypass the local network</string>
+    <string name="connection_bypass_lan_on">LAN traffic rides the physical network, as if the VPN were off</string>
+    <string name="connection_bypass_lan_off">Everything goes through the tunnel, the LAN included</string>
+    <string name="settings_background_refresh">Background refresh</string>
+    <string name="settings_background_refresh_count">Auto-updates %d subscriptions</string>
+    <string name="settings_about_core">Xray core</string>
+    <string name="settings_about_core_running">running</string>
+    <string name="settings_about_core_not_running">stopped</string>
+    <string name="settings_about_version">Version</string>
+    <string name="settings_about_build_date">Build date</string>
+    <string name="settings_about_language">Language</string>
+    <string name="settings_about_check_updates">Check for updates</string>
+    <string name="settings_about_tagline">An Xray client wrapped in Material 3 Expressive</string>
+    <string name="settings_about_telegram">Telegram channel</string>
+    <string name="settings_about_telegram_handle" translatable="false">t.me/ChumpyXray</string>
+    <string name="settings_about_github">GitHub</string>
+    <string name="settings_about_github_handle" translatable="false">github.com/ChumpyXray/Chumpy</string>
+
+    <!-- Fonts -->
+    <string name="fonts_system">System</string>
+    <string name="fonts_inter" translatable="false">Inter</string>
+    <string name="fonts_add">Add font</string>
+    <string name="fonts_delete_title">Delete this font?</string>
+    <string name="fonts_delete_text">\"%1$s\" will be removed from the app. You can import it again any time.</string>
+    <string name="fonts_delete_confirm">Delete</string>
+    <string name="fonts_cancel">Cancel</string>
+    <string name="fonts_import_failed">Couldn\'t import the font: %1$s</string>
+    <string name="fonts_import_not_font">not a TTF or OTF font file</string>
+    <string name="fonts_import_too_large">the file is too large</string>
+
+    <!-- Wallpapers -->
+    <string name="wallpapers_preview">Preview</string>
+    <string name="wallpapers_settings">Settings</string>
+    <string name="wallpapers_title">Wallpaper preview</string>
+    <string name="wallpapers_greeting">How\'s it feel?</string>
+    <string name="wallpapers_greeting_empty">It\'s time to select wallpapers!</string>
+    <string name="wallpapers_pick">Select wallpaper image</string>
+    <string name="wallpapers_pick_change">Change wallpaper image</string>
+    <string name="wallpapers_delete">Remove wallpaper</string>
+    <string name="wallpapers_move_hint">Long-tap the wallpaper to move it</string>
+    <string name="wallpapers_text_hint">Tap the text to recolor it</string>
+    <string name="wallpapers_done">Done</string>
+    <string name="wallpapers_percent" translatable="false">%1$d%%</string>
+    <string name="wallpapers_dim_tone">Dim color</string>
+    <string name="wallpapers_dim_tone_hint">The scrim\'s tone over the wallpaper</string>
+    <string name="wallpapers_blur_hint">How much the wallpaper blurs away from Home</string>
+    <string name="wallpapers_opacity_hint">How see-through the cards and menus are</string>
+    <string name="wallpapers_zoom">Wallpaper zoom</string>
+    <string name="wallpapers_zoom_hint">The wallpaper slightly zooms away from Home and back</string>
+    <string name="wallpapers_grayscale">Grayscale when disconnected</string>
+    <string name="wallpapers_grayscale_hint">The wallpaper drains to black-and-white while the VPN is down</string>
+    <string name="wallpapers_import_not_image">not an image file</string>
+    <string name="wallpapers_import_too_large">the image is too large</string>
+
+
+    <!-- Stats screen -->
+    <string name="stats_traffic">Traffic</string>
+    <string name="stats_loss">Packet loss</string>
+    <string name="stats_down">Down</string>
+    <string name="stats_up">Up</string>
+    <string name="stats_window">Last 15 min</string>
+    <string name="stats_peak">Peak %1$s</string>
+    <string name="stats_loss_percent" translatable="false">%1$d%%</string>
+    <string name="stats_loss_warning">Packet loss too high: %1$d%%</string>
+    <string name="stats_probes_caption">A probe every 15 s</string>
+    <string name="stats_core_logs">Core logs</string>
+    <string name="stats_core_logs_empty">Nothing yet — connect the tunnel</string>
+    <string name="stats_core_logs_copy">Copy the logs</string>
+    <string name="stats_waiting">Waiting for data…</string>
+    <string name="stats_no_data">No data</string>
+    <string name="stats_frozen_from">Stats from %1$s</string>
+    <string name="stats_week">This week</string>
+    <string name="stats_week_total">Total %1$s</string>
+
+    <!-- Notifications + tunnel errors (shown by the :core process) -->
+    <string name="notif_channel_vpn">VPN connection</string>
+    <string name="notif_channel_vpn_desc">The ongoing connection status</string>
+    <string name="notif_connected">Connected</string>
+    <string name="notif_connecting">Connecting…</string>
+    <string name="notif_disconnected">Disconnected</string>
+    <string name="notif_profile_unknown">unknown server</string>
+    <string name="notif_action_disconnect">Disconnect</string>
+    <string name="notif_separator" translatable="false">•</string>
+    <string name="notif_channel_alerts">Tunnel alerts</string>
+    <string name="notif_channel_alerts_desc">A running tunnel that fell</string>
+    <string name="notif_interrupted_title">Connection interrupted</string>
+    <string name="notif_interrupted_revoked">Another VPN took over this one.</string>
+    <string name="notif_interrupted_auto">Another VPN took over this one. Reconnecting…</string>
+    <string name="notif_reconnected_title">Connection restored</string>
+    <string name="notif_reconnected_text">Tokmak brought the tunnel back by itself.</string>
+    <string name="notif_reconnect_failed_title">Reconnect failed</string>
+    <string name="notif_interrupted_off">The tunnel is down — Tokmak will not bring it back on its own.</string>
+    <string name="notif_action_reconnect">Reconnect</string>
+    <string name="notif_action_disconnect_anyway">Disconnect anyway</string>
+    <string name="notif_channel_updates">App updates</string>
+    <string name="notif_channel_updates_desc">A new version\'s download and its install ask</string>
+    <string name="notif_update_title">Tokmak update</string>
+    <string name="notif_update_downloading">Downloading the new version…</string>
+    <string name="notif_update_paused">Download paused</string>
+    <string name="notif_update_pause">Pause</string>
+    <string name="notif_update_resume">Resume</string>
+    <string name="notif_update_cancel">Cancel</string>
+    <string name="update_available_chip">Update available</string>
+    <string name="update_checking">Checking…</string>
+    <string name="update_up_to_date">Up to date</string>
+    <string name="update_downloading_percent">Downloading %1$d%%</string>
+    <string name="update_paused">Paused %1$d%%</string>
+    <string name="update_ready">Ready to install</string>
+    <string name="error_no_config">No server selected</string>
+    <string name="error_vpn_not_authorized">VPN permission was not granted</string>
+    <string name="error_tun_creation">Couldn\'t create the VPN interface. Is another VPN set to always-on?</string>
+    <string name="error_unknown">Something went wrong</string>
+    <string name="phone_import_action">Import from phone</string>
+    <string name="phone_import_no_network">Connect the TV to Wi-Fi or Ethernet, then reopen this screen.</string>
+    <string name="phone_import_expired">The session has expired. Close this screen and start again.</string>
+    <string name="phone_import_received">A link or configuration was received. Import it on this device?</string>
+    <string name="phone_import_qr">Scan with your phone to send a link</string>
+    <string name="phone_import_instructions">Connect your phone to the same local network. Scan the QR code or open the address below in its browser and enter the code. Paste the link and send it.</string>
+    <string name="phone_import_code">Code: %1$s</string>
+    <string name="phone_import_local">Reception lasts 5 minutes and stops when this screen closes. Use a trusted network: the local connection is not encrypted.</string>
+    <string name="phone_import_starting">Opening local reception…</string>
+    <string name="phone_import_confirm">Import</string>
+    <string name="color_hue">Hue</string>
+    <string name="color_saturation">Saturation</string>
+    <string name="color_lightness">Lightness</string>
+    <string name="wallpaper_horizontal">Horizontal position</string>
+    <string name="wallpaper_vertical">Vertical position</string>
+    <string name="wallpaper_scale">Picture scale</string>
+    <string name="action_unavailable">No app on this device can open this action.</string>
+    <string name="phone_import_importing">Importing. This may take up to 45 seconds…</string>
+    <string name="phone_wallpaper_action">Wallpaper from phone</string>
+    <string name="phone_wallpaper_received">An image was received. Use it as the app wallpaper?</string>
+    <string name="phone_wallpaper_qr">Scan with your phone to send a wallpaper</string>
+    <string name="phone_wallpaper_instructions">Connect your phone to the same local network. Scan the QR code or open the address in its browser and enter the code. Choose an image and send it.</string>
+    <string name="wallpapers_move_hint_controller">Hold OK to move the wallpaper</string>
+    <string name="wallpapers_move_controls">Arrows: move · Menu: zoom · OK: save · Back: cancel</string>
+    <string name="wallpapers_zoom_controls">Arrows: zoom · Menu: move · OK: save · Back: cancel</string>
+    <string name="error_geodata_source_missing">Database %1$s lacks categories %2$s and the subscription provides no download URL. Refresh the subscription or ask the provider for its database.</string>
+    <string name="error_geodata_categories">The provider database lacks required categories: %1$s.</string>
+    <string name="error_geodata_download">Could not prepare the subscription routing database: %1$s</string>
 </resources>

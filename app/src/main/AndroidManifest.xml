@@ -1,48 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Watching the network under the tunnel, v2rayNG's way: the physical default
+         network is asked for by request (CHANGE_NETWORK_STATE, a normal permission
+         granted at install), and its changes hand the core over to a re-dial. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <!-- The short haptic pokes on the settings buttons go through the Vibrator directly. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- The VPN runs as a specialUse foreground service (as v2rayNG does). -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- The update download's live tile asks the system to promote it (Android 16+). -->
+    <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
+    <!-- Installing the downloaded update APK; the installer's own consent flow. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
+    <!-- The QR scanner's own; asked for only there, on first scan. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+
+    <!-- Package visibility (Android 11+): without declaring what we look for, the
+         per-app proxy's launcher query only answers with a handful of system packages.
+         The MAIN/LAUNCHER intent filter is the app picker's own scope — every app the
+         launcher can start. -->
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+        </intent>
     </queries>
 
     <application
-        android:name=".App"
+        android:name=".ChumpyApp"
         android:allowBackup="false"
+        android:usesCleartextTraffic="true"
+        android:enableOnBackInvokedCallback="true"
+        android:banner="@drawable/tv_banner"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Tokmak">
+        android:localeConfig="@xml/locales_config"
+        android:theme="@style/Theme.Chumpy"
+        tools:targetApi="36">
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize">
+            <!-- The MAIN/LAUNCHER intent-filter lives on the aliases below: switching the
+                 icon variant flips which alias is enabled, and the launcher follows. -->
+            <!-- Long-pressing the Quick Settings tile opens the app. -->
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".vpn.TokmakVpnService"
+        <!-- The four launcher entries, one per icon variant. Exactly one is enabled at a
+             time (Chumpy out of the box); the settings screen flips them via
+             PackageManager.setComponentEnabledSetting, and the picker applies the choice
+             the moment it is made. -->
+        <activity-alias
+            android:name=".LauncherChumpy"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:icon="@mipmap/ic_launcher"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- The inverted icon: white art on the sky background. -->
+        <activity-alias
+            android:name=".LauncherInverted"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:icon="@mipmap/ic_launcher_inverted"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- The themed icon: neutral art the system's own themed icons (Android 13+) can
+             tint with the monet palette; in the app's own colors everywhere else. -->
+        <activity-alias
+            android:name=".LauncherThemed"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:icon="@mipmap/ic_launcher_themed"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- The dark icon: the white art on a near-black night sky. -->
+        <activity-alias
+            android:name=".LauncherDark"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:icon="@mipmap/ic_launcher_dark"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!--
+            The wallpaper picker, a one-off deep dive from the interface settings rather
+            than a navbar destination: two pages (preview, settings) under one bar. Back
+            (gesture or button) simply finishes it.
+        -->
+        <activity
+            android:name=".ui.wallpapers.WallpaperActivity"
             android:exported="false"
-            android:foregroundServiceType="systemExempted"
-            android:permission="android.permission.BIND_VPN_SERVICE">
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ui.perapp.PerAppProxyActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        <!--
+            The QR scanner: a full-screen camera that returns one decoded string. A
+            separate activity rather than a navbar destination: it needs the camera
+            permission and a result channel, and back (gesture or tile) simply exits.
+        -->
+        <activity
+            android:name=".ui.scan.ScannerActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
+        <!--
+            Everything that has to outlive the UI lives in ":core": this VpnService with
+            the Xray runtime and the QS tile. The UI process talks to it over AIDL and can
+            be killed at any time. The system itself binds it for Always-on VPN.
+        -->
+        <service
+            android:name=".core.ChumpyVpnService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_VPN_SERVICE"
+            android:process=":core"
+            tools:ignore="VpnServicePolicy">
             <intent-filter>
                 <action android:name="android.net.VpnService" />
             </intent-filter>
+            <meta-data
+                android:name="android.net.VpnService.SUPPORTS_ALWAYS_ON"
+                android:value="true" />
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="vpn" />
         </service>
-    </application>
 
+        <!--
+            Same ":core" process as the core, so the tile keeps toggling the VPN while
+            the UI process is not running. Clicking without a config or VPN consent just
+            opens the app.
+        -->
+        <service
+            android:name=".core.QuickTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_tile_off"
+            android:label="@string/app_name"
+            android:process=":core"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <!--
+            The update notification's own buttons, coming home: pause, resume and cancel
+            reach the running download, dismiss also writes the wave-away to the prefs
+            so it stands even from a cold start.
+        -->
+        <receiver
+            android:name="slop.miho.chumpy.core.UpdateActionReceiver"
+            android:exported="false" />
+
+        <!--
+            Serves the downloaded update APK to the system's package installer: the
+            file stays in the app's own storage, the installer reads it through this
+            grant, the APK never travels anywhere else.
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/update_file_paths" />
+        </provider>
+    </application>
 </manifest>
