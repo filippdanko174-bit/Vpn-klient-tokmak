@@ -1,0 +1,11 @@
+name: Probe engine
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          git clone -q --depth 1 https://github.com/2dust/AndroidLibXrayLite /tmp/lib
+          ls /tmp/lib
+          grep -rn "MeasureOutboundDelay\|func measure\|MeasureDelay" /tmp/lib --include=*.go | head
+          for f in $(grep -rl "MeasureOutboundDelay" /tmp/lib --include=*.go); do echo "=== $f"; cat $f; done
