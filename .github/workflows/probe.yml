@@ -1,0 +1,18 @@
+name: Probe engine
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view -R 2dust/AndroidLibXrayLite --json tagName,name --jq '.tagName+" "+.name'
+          mkdir -p /tmp/a && cd /tmp/a && gh release download -R 2dust/AndroidLibXrayLite -p '*.aar' && unzip -q -o *.aar
+          echo "--- strings"; strings -n 6 jni/arm64-v8a/libgojni.so | grep -iE 'xray\.tun|tun\.fd|XRAY_TUN|tun2socks|hev-socks|github.com/xtls/xray-core@' | sort -u | head -20
+          echo "--- AndroidLibXrayLite source"
+          git clone -q --depth 1 https://github.com/2dust/AndroidLibXrayLite /tmp/lib && cat /tmp/lib/libv2ray_main.go | head -250
+          echo "--- go.mod"; grep -iE 'xray-core|^go ' /tmp/lib/go.mod
+          V=$(grep -oE 'xray-core v[0-9a-z.\-]+' /tmp/lib/go.mod | head -1); echo $V
+          git clone -q --depth 1 https://github.com/XTLS/Xray-core /tmp/xray
+          echo "--- tun conf"; cat /tmp/xray/infra/conf/tun.go
