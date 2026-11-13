@@ -84,6 +84,14 @@ class Store(context: Context) {
         sp.edit().putString("settings", o.toString()).apply()
     }
 
+    /** Постоянный идентификатор устройства для подписок (HWID). */
+    fun hwid(): String {
+        sp.getString("hwid", null)?.let { return it }
+        val k = java.util.UUID.randomUUID().toString().replace("-", "")
+        sp.edit().putString("hwid", k).apply()
+        return k
+    }
+
     /** Стабильный случайный ключ для XUDP. */
     fun xudpKey(): String {
         sp.getString("xudp", null)?.let { return it }

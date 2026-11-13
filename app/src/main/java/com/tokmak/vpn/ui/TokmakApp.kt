@@ -260,12 +260,15 @@ private fun ServersScreen(vm: MainViewModel) {
             Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            FilledTonalButton(onClick = { vm.importText(clipboard.getText()?.text.orEmpty()) }) {
-                Icon(Icons.Default.Add, null, Modifier.size(18.dp)); Spacer(Modifier.width(6.dp)); Text("Из буфера")
+            val pad = PaddingValues(horizontal = 8.dp)
+            FilledTonalButton(onClick = { vm.importText(clipboard.getText()?.text.orEmpty()) }, modifier = Modifier.weight(1f), contentPadding = pad) {
+                Text("Из буфера", maxLines = 1, softWrap = false)
             }
-            FilledTonalButton(onClick = { showSub = true }) { Text("Подписка") }
-            FilledTonalButton(onClick = { vm.pingAll() }, enabled = !busy) {
-                Icon(Icons.Default.Refresh, null, Modifier.size(18.dp)); Spacer(Modifier.width(6.dp)); Text("Пинг")
+            FilledTonalButton(onClick = { showSub = true }, modifier = Modifier.weight(1f), contentPadding = pad) {
+                Text("Подписка", maxLines = 1, softWrap = false)
+            }
+            FilledTonalButton(onClick = { vm.pingAll() }, enabled = !busy, modifier = Modifier.weight(1f), contentPadding = pad) {
+                Text("Пинг", maxLines = 1, softWrap = false)
             }
         }
         if (subs.isNotEmpty()) {

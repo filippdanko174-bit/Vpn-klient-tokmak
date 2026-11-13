@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Щит с замочной скважиной (вырез) -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M54,25 L79,34.5 V54 C79,69 68.5,79.5 54,86 C39.5,79.5 29,69 29,54 V34.5 Z M48,52 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0 Z M52,58 H56 V69 H52 Z" />
+</vector>

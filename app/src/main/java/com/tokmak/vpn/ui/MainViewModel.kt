@@ -55,9 +55,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             busy.value = true
             try {
-                val list = withContext(Dispatchers.IO) { SubFetcher.fetch(u) }
+                val list = withContext(Dispatchers.IO) { SubFetcher.fetch(u, store.hwid()) }
                 if (list.isEmpty()) {
                     message.value = "В подписке нет поддерживаемых серверов"
+                } else if (list.all { it.host == "0.0.0.0" }) {
+                    message.value = "Провайдер: ${list.first().name}"
                 } else {
                     subs.update { it + sub }
                     store.saveSubs(subs.value)
@@ -83,8 +85,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             var ok = 0
             for (s in all) {
                 try {
-                    val list = withContext(Dispatchers.IO) { SubFetcher.fetch(s.url) }
-                    if (list.isNotEmpty()) {
+                    val list = withContext(Dispatchers.IO) { SubFetcher.fetch(s.url, store.hwid()) }
+                    if (list.isNotEmpty() && list.all { it.host == "0.0.0.0" }) {
+                        message.value = "Провайдер: ${list.first().name}"
+                    } else if (list.isNotEmpty()) {
                         mergeProfiles(list.map { it.copy(subId = s.id) }, replaceSubId = s.id)
                         ok++
                     }
@@ -92,7 +96,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 }
             }
             busy.value = false
-            message.value = "Обновлено подписок: $ok из ${all.size}"
+            if (message.value == null) message.value = "Обновлено подписок: $ok из ${all.size}"
         }
     }
 
