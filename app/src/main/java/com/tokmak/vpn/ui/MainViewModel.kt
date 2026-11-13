@@ -29,6 +29,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     val selectedId = MutableStateFlow(store.selectedId())
     val settings = MutableStateFlow(store.loadSettings())
     val busy = MutableStateFlow(false)
+    val pingErrors = MutableStateFlow<Map<String, String>>(emptyMap())
     val message = MutableStateFlow<String?>(null)
 
     fun selectedProfile(): Profile? = profiles.value.firstOrNull { it.id == selectedId.value }
@@ -158,6 +159,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         }
         viewModelScope.launch {
             busy.value = true
+            pingErrors.value = emptyMap()
             profiles.update { l -> l.map { it.copy(delay = -1L) } }
             withContext(Dispatchers.IO) {
                 Engine.init(getApplication())
@@ -165,8 +167,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 list.map { p ->
                     async {
                         gate.withPermit {
-                            val d = Engine.ping(p)
-                            profiles.update { l -> l.map { if (it.id == p.id) it.copy(delay = d) else it } }
+                            val r = Engine.ping(p)
+                            r.error?.let { e -> pingErrors.update { m -> m + (p.id to e) } }
+                            profiles.update { l -> l.map { if (it.id == p.id) it.copy(delay = r.ms) else it } }
                         }
                     }
                 }.awaitAll()

@@ -1,10 +1,15 @@
 package com.tokmak.vpn.core
 
 import android.content.Context
+import android.util.Log
 import com.tokmak.vpn.data.Profile
 import com.tokmak.vpn.data.Store
 import libv2ray.Libv2ray
 import java.io.File
+import java.net.InetSocketAddress
+import java.net.Socket
+
+data class PingResult(val ms: Long, val error: String? = null)
 
 object Engine {
     @Volatile
@@ -30,10 +35,21 @@ object Engine {
         inited = true
     }
 
-    /** Задержка до сервера в мс или -2 при ошибке. Блокирующий вызов. */
-    fun ping(p: Profile): Long = try {
-        Libv2ray.measureOutboundDelay(ConfigBuilder.forTest(p), ConfigBuilder.TEST_URL)
+    /** Задержка до сервера в мс; при ошибке -2 и текст причины. Блокирующий вызов. */
+    fun ping(p: Profile): PingResult = try {
+        PingResult(Libv2ray.measureOutboundDelay(ConfigBuilder.forTest(p), ConfigBuilder.TEST_URL))
     } catch (e: Throwable) {
-        -2L
+        val msg = (e.message ?: e.toString()).lines().first().take(160)
+        Log.w("Tokmak", "ping ${p.name}: $msg")
+        PingResult(-2L, "${tcpCheck(p)}. Xray: $msg")
+    }
+
+    /** Отличает «сервер недоступен» от «сервер доступен, но прокси не отвечает». */
+    private fun tcpCheck(p: Profile): String = try {
+        val t = System.currentTimeMillis()
+        Socket().use { it.connect(InetSocketAddress(p.host, p.port), 4000) }
+        "Порт открыт (${System.currentTimeMillis() - t} мс)"
+    } catch (e: Exception) {
+        "Порт недоступен (${e.javaClass.simpleName}: ${e.message})"
     }
 }

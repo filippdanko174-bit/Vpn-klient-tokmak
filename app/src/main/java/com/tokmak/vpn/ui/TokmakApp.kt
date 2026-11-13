@@ -250,6 +250,7 @@ private fun ServersScreen(vm: MainViewModel) {
     val subs by vm.subs.collectAsState()
     val selectedId by vm.selectedId.collectAsState()
     val busy by vm.busy.collectAsState()
+    val pingErrors by vm.pingErrors.collectAsState()
     val clipboard = LocalClipboardManager.current
     var showSub by remember { mutableStateOf(false) }
 
@@ -295,7 +296,7 @@ private fun ServersScreen(vm: MainViewModel) {
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 items(profiles, key = { it.id }) { p ->
-                    ServerRow(p, p.id == selectedId, { vm.select(p.id) }, { vm.remove(p.id) })
+                    ServerRow(p, p.id == selectedId, pingErrors[p.id], { vm.select(p.id) }, { vm.remove(p.id) })
                 }
             }
         }
@@ -307,7 +308,7 @@ private fun ServersScreen(vm: MainViewModel) {
 }
 
 @Composable
-private fun ServerRow(p: Profile, selected: Boolean, onSelect: () -> Unit, onDelete: () -> Unit) {
+private fun ServerRow(p: Profile, selected: Boolean, error: String?, onSelect: () -> Unit, onDelete: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onSelect),
         colors = CardDefaults.cardColors(
@@ -319,6 +320,7 @@ private fun ServerRow(p: Profile, selected: Boolean, onSelect: () -> Unit, onDel
             Column(Modifier.weight(1f)) {
                 Text(p.name, style = MaterialTheme.typography.titleMedium, maxLines = 1)
                 Text("${p.protocol} · ${p.host}:${p.port}", style = MaterialTheme.typography.bodySmall, maxLines = 1)
+                if (error != null) Text(error, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error, maxLines = 4)
             }
             val d = delayText(p.delay)
             if (p.delay == -1L) Unit else Text(
